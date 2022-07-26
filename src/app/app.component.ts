@@ -18,7 +18,7 @@ export class AppComponent {
   configureSingleSignOn(){
     this.oauthService.configure(authCodeFlowConfig);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-    this.oauthService.loadDiscoveryDocumentAndLogin().then(() => {
+    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
 
       if (this.oauthService.hasValidAccessToken()) {
 
@@ -27,6 +27,11 @@ export class AppComponent {
       }
     }
     )
+
+  }
+
+  login(){
+    this.oauthService.initImplicitFlow();
 
   }
 
