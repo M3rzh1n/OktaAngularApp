@@ -10,40 +10,30 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  deploy:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Checkout 
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '16'
 
-    - name: Node ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm run test:headless
+
+    - name: Build
+      run: npm run build:prod
+
+    - name: deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: npm ci and npm run build
-      run: |
-        npm ci
-        npm run build:ci
-
-  deploy: #🚀
-      runs-on: ubuntu-latest
-      needs: build
-      steps:
-
-        - name: Deploy to GitHub Pages
-          uses: JamesIves/github-pages-deploy-action@releases/v3
-          with:
-            GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-            BRANCH: gh-pages
-            FOLDER: .
+        GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: .
