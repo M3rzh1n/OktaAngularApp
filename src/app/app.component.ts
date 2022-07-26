@@ -43,4 +43,9 @@ export class AppComponent {
     let claims:any = this.oauthService.getIdentityClaims();
     return claims ? claims : null;
   }
+
+  get access_token(){
+    const accesstToken = this.oauthService.getAccessToken();
+    return accesstToken ? accesstToken : null;
+  }
 }
